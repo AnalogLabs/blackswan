@@ -173,8 +173,8 @@ Re-write the contents of an existing chunk at a specified index:
 function update_chunk(uint _index, bytes32 _data) public returns (bool)
 ```
 ```
-data = ...
->>> bci.contract.transact(bci.tx).update_chunk(6782,
+chunk_data = ...
+>>> bci.contract.transact(bci.tx).update_chunk(6782, chunk_data)
 ```
 
 ## References
