@@ -6,6 +6,7 @@ Principal Investigator
 Analog Labs, Logisome, Inc. R&D
 omar@analog.earth
 [Blackswan: Blockchain File System](www.analog.earth/blackswan)
+```
 
 
 ## Introduction
