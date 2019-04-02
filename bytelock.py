@@ -117,7 +117,8 @@ if answer[0].lower() == 'y':
             #try:
             bci = BCInterface(mainnet=True)
             bci.load_contract()
-            bci.unlock_account(eth_password)
+            if eth_password:
+                bci.unlock_account(eth_password)
             bci.set_gas(50000)
             bci.contract.transact(bci.tx).new_chunk(index, bytes32_arg)
             #except:
