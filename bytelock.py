@@ -42,6 +42,8 @@ TIMEOUT = 60*2  #number of seconds to wait between chunks while uploading to blo
 DEFAULT_NEW_CHUNK_GAS = 49777
 DEFAULT_UPDATE_CHUNK_GAS = 29812
 
+eth_password = ''
+
 greeting = """
 B Y T E L O CK
 
@@ -52,6 +54,8 @@ By using this software, you agree to the Analog Labs License available at analog
 """
 print(greeting)
 filename = input("Enter a file path and name: ")
+eth_password = input("Enter your Ethereum password: ")
+
 b = None
 
 with open(filename) as imageFile:
@@ -113,7 +117,7 @@ if answer[0].lower() == 'y':
             #try:
             bci = BCInterface(mainnet=True)
             bci.load_contract()
-            bci.unlock_account('a&madSabry12')
+            bci.unlock_account(eth_password)
             bci.set_gas(50000)
             bci.contract.transact(bci.tx).new_chunk(index, bytes32_arg)
             #except:
