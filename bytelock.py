@@ -34,7 +34,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from bcinterface import *
+from time import sleep
+
 CHUNK_SIZE = 32  # size of chunk in bytes
+TIMEOUT = 60*2  #number of seconds to wait between chunks while uploading to blockchain
+DEFAULT_NEW_CHUNK_GAS = 49777
+DEFAULT_UPDATE_CHUNK_GAS = 29812
 
 greeting = """
 B Y T E L O CK
@@ -65,6 +71,56 @@ while i < len(b):
 
 print("Chunk size: ",CHUNK_SIZE)
 print("Number of chunks: ", str(len(b)/CHUNK_SIZE))
-#print(str(file_in_bytes).replace("'","\"") )
+i = 0
+while i*CHUNK_SIZE < len(b):
+    index = i
+    bytes32_data = str(file_in_bytes[ i*CHUNK_SIZE: i*CHUNK_SIZE+CHUNK_SIZE]).replace("'","\"")
+
+    #print("Index: ",index)
+    #print("bytes32 data: ", bytes32_data)
+    i+=1
+
+answer = input("Would you like to upload this file to the Ethereum blockchain? (y/N)\n> ")
+if answer[0].lower() == 'y':
+    bci = BCInterface(mainnet=True)
+    bci.load_contract()
+
+    i=0
+    while i*CHUNK_SIZE < len(b):
+        index = i
+        bytes32_data = file_in_bytes[ i*CHUNK_SIZE: i*CHUNK_SIZE+CHUNK_SIZE]
+        bytes32_arg = bci.web3.toHex( b[i*CHUNK_SIZE: i*CHUNK_SIZE+CHUNK_SIZE] ) 
+        '''
+        for l in bytes32_data:
+            print(l[2:])
+            bytes32_arg += l[2:]
+        '''
+        
+        num_chunks = bci.contract.call().get_num_chunks(bci.eth_accounts[bci.account_index])
+        #print("Number of chunks: ",num_chunks)
+        #print("Index: ",index)
+        #print("bytes32 data: ", bytes32_arg)
+
+        if index < num_chunks:
+            #bci.set_gas(DEFAULT_NEW_CHUNK_GAS)
+            #print("updating chunk at index ",index)
+            #bci.contract.transact(bci.tx).update_chunk(index, bytes32_arg)
+            print("skipping index ", index)
+            pass
+        else:
+            #bci.set_gas(DEFAULT_UPDATE_CHUNK_GAS)
+            print("uploading new chunk: ", bytes32_arg)
+            #try:
+            bci = BCInterface(mainnet=True)
+            bci.load_contract()
+            bci.unlock_account('a&madSabry12')
+            bci.set_gas(50000)
+            bci.contract.transact(bci.tx).new_chunk(index, bytes32_arg)
+            #except:
+            #print('upload to blockchain failed.')
+            sleep(TIMEOUT)
+
+        i+=1
+
 
 
